@@ -6,9 +6,10 @@ lib-cov
 *.out
 *.pid
 *.gz
-
+*.DS_Store
 pids
 logs
 results
+server/node_modules*
 
 npm-debug.log
