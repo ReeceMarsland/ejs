@@ -2,7 +2,7 @@
   "name": "ejs-server",
   "version": "0.0.1",
   "dependencies": {
-    "now": "0.8.x"
+    "now": "0.8.x",
     "serialport": "1.1.x"
   },
   "engines": {
