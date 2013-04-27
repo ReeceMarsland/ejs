@@ -45,7 +45,8 @@ serialPort.on('data', function(data) {
         console.log("Dog Time: " + dogTime);
         console.log("Total Time: " + EJS.lane1TotalTime);
 
-        everyone.now.receiveTime('L', EJS.lane1TotalTime);
+        everyone.now.receiveHeatTime('L', dogTime, 0.03, dogTime - 0.03);
+        everyone.now.receiveHeatTotalTime('L', EJS.lane1TotalTime, 0.03, dogTime - 0.03);
 
         break;
 
@@ -67,7 +68,12 @@ serialPort.on('data', function(data) {
     }
 });
 
-function h2d(h) {return parseInt(h,16);}
+/**
+ * Return the decimal value of a hex
+ */
+function h2d(h) {
+  return parseInt(h,16);
+}
 
 
 /**
