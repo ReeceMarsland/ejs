@@ -1,12 +1,13 @@
 module.exports = {
   init : function() {
+    var config = require('./config.json');
     var com = require("serialport");
     var EJS = {
       lane1TotalTime : 0,
       lane2TotalTime : 0
     };
 
-    var serialPort = new com.SerialPort("/dev/cu.usbserial", {
+    var serialPort = new com.SerialPort(config.serialPort, {
         baudrate: 38400,
         parser: com.parsers.readline("\n\r")
         //parser: com.parsers.readline('\r\n')

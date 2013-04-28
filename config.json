@@ -1,0 +1,5 @@
+{
+    "serialPort" : "/dev/cu.usbserial",
+    "domain" : "ejs.app",
+    "port" : 80
+}
