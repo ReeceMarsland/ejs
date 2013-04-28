@@ -4,6 +4,7 @@
   "dependencies": {
     "now": "0.8.x",
     "serialport": "1.1.x"
+    "express": "3.x.x"
   },
   "engines": {
     "node": "0.10.x",
