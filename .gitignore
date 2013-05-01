@@ -10,6 +10,7 @@ lib-cov
 pids
 logs
 results
+*.sublime-*
 
 # Custom
 config.json
