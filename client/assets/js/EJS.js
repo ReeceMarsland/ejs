@@ -97,17 +97,40 @@ var EJS = {
   }
 };
 
+// Initialize Socket
+var socket = io.connect('http://ejs.mac');
 
-// /**
-//  * functions in the now namespace
-//  * that the server can call
-//  */
-// now.receiveHeatTime = function(lane, time, pass, perfect) {
-//   EJS.newHeatTime(lane, time, pass, perfect);
-// };
+// New heat time
+socket.on('receiveNewHeatTime', function (data) {
+  console.log(data);
+  EJS.newHeatTime(data.lane, data.time, data.pass, data.perfect);
+});
 
-// now.receiveHeatTotalTime = function(lane, time, pass, perfect) {
-//   EJS.newHeatTotalTime(lane, time, pass, perfect);
-// };
+// New heat total time
+socket.on('receiveHeatTotalTime', function (data) {
+  console.log(data);
+  EJS.newHeatTotalTime(data.lane, data.time, data.pass, data.perfect);
+});
+
+// Race reset
+socket.on('raceReset', function (data) {
+  console.log(data);
+  EJS.reset();
+});
+
+// Race started
+socket.on('raceStart', function (data) {
+  console.log('race started');
+});
+
+// Race begin
+socket.on('raceBegin', function (data) {
+  console.log('race begin');
+});
+
+// Race finish
+socket.on('raceFinish', function (data) {
+  console.log('race finished');
+});
 
 EJS.init();
