@@ -19,7 +19,7 @@ Installation
           "port" : 80 //Port of client site
         }
 
-+ Connect usb-to-serial adatper
++ Connect usb-to-serial adapter
 + Run server app:
 
          sudo node main.js
