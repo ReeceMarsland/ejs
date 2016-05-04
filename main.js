@@ -27,12 +27,18 @@ serialPort.on('open',function() {
 serialPort.on('data', function(data) {
   //var dataString = data.toString();
   //data = "--" + data + "--";
-  //console.log(data);
+  if (config.debug == true) {
+    console.log(data);
+  }
 
   if (!data.length) { return; }
 
 
   var EJSdata = EJS.processData(data);
+
+  if (config.debug == true) {
+    console.log(EJSdata);
+  }
 
   switch(EJSdata.eventType) {
     case 'u':
