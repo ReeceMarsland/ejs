@@ -171,7 +171,7 @@ var EJS = {
     }
     time = time / 1000;
     console.log(time);
-    return Number(Math.round(time+'e2')+'e-2');
+    return Number(Math.round(time+'e2')+'e-2').toFixed(2);
   },
 
   h2d : function(h) {
