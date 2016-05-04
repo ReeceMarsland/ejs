@@ -7,7 +7,7 @@ app.use(express.static(__dirname + '/client'));
 app.use(express.vhost(config.domain, app));
 app.use(express.vhost(config.domain1, app));
 var http = require('http');
-var server = http.createServer(app).listen(config.port, "0.0.0.0");
+var server = http.createServer(app).listen(config.port);
 var io = require('socket.io').listen(server);
 
 // Connect to serial port
