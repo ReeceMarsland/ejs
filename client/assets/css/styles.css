@@ -30,3 +30,13 @@ tr.totals td {
 table.table td, table.table th {
   text-align: center;
 }
+
+.full-size {
+  text-align: center;
+  font-size: 300px;
+  line-height: 300px;
+}
+
+.timer-display-page {
+  background-color: #000;
+}

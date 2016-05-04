@@ -10,9 +10,9 @@ lib-cov
 pids
 logs
 results
-*.sublime-*
 
 # Custom
 config.json
 node_modules*
 npm-debug.log
+*.sublime-*

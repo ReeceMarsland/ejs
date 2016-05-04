@@ -1,0 +1,78 @@
+r        status    mod    CRLF                                                - after reset
+e        TimeH    TimeM    TimeL    status      0         mod     switches    - line judge change error switches
+s        TimeH    TimeM    TimeL    status      0       Fly/Agil  switches    - begin of measuring
+d        TimeH    TimeM    TimeL    status    sensors     mod     switches    - change on some sensor gate
+z        TimeH    TimeM    TimeL    status      0         mod     switches    - green on semaphore is switch ON
+T        TimeH    TimeM    TimeL    status    brána       mod     switches    - first judge finished measuring
+t        TimeH    TimeM    TimeL    status    brána       mod     switches    - second judge finished measuring - end of race
+u        Ul        Uh        firm    firm    firm     sett        sett        - bnattery voltage, firmaware version,  setting of EJS
+
+
+Status: byte;   7 - green light on semaphore            obsolete
+                6 - button STOP left gate            obsolete
+                5 - button STOP right gate            obsolete
+                4 - button START                obsolete
+                3 - safe time left gate
+                2 - safe time right gate
+                1 - run - EJS measures times
+                0 -
+
+Sensor: byte;   7 - left-pass H' change
+                6 - left-line 'H' change
+                5 - right-pass 'H' change
+                4 - right-line 'H' change
+                3 - left-pass 'H' interrupt
+                2 - left-line 'H' interrupt
+                1 - right-pass 'H' interrupt
+                0 - right-line 'H' interrupt
+
+Mod   : byte    7 - LineOchr1          set to "H" on begin of safe time, set to "L" by next interrupt on start line or by end of safe time
+                6 - LineOchr2          set to "H" on begin of safe time, set to "L" by next interrupt on start line or by end of safe time
+                5 - ErrChng1       set to "H" by begin of passing error, set to "L" by next interrupt pass line
+                4 - ErrChng2       set to "H" by begin of passing error, set to "L" by next interrupt pass line
+                3 - white error light for track 1 - error light on blue
+                2 - white error light for track 2 - error light on red
+                1 - NAFA on blue  / only on newer firmware !!!!!
+                0 - NAFA on red    / only on newer firmware !!!!!
+
+ErrSem         7 -  green
+               6 - yellow
+               5 - blue
+               4 - red
+               3 - green
+               2 - yellow
+               1 - blue
+               0 - red
+
+
+
+    time status sensors mod   switches
+d 002752 02     22      80    00
+0 1-6 7-8     9-10    11-12 13-14
+
+
+
+
+
+
+If a beam is broken before the start of the timer, a false start shall be
+indicated
+
+No other condition shall cause a false start indication
+
+For a system using two (or more) columns of beams:
+
+  The beam column closest to the start/finish line shall be the line beam
+
+  The beam column closest to the first hurdle shall be the passing beam
+
+Once the timer has started, each time the line beam is broken ("safe"
+or not), an updated elapsed time shall be shown
+
+Each time the passing beam is broken or cleared, the line beam shall
+be "safe" for 2 seconds
+
+If the line beam is broken while not "safe" a pass fault shall be
+indicated for at least 2 seconds
+
+No other condition shall cause a pass fault indication

@@ -16,10 +16,6 @@ var EJS = {
   },
 
   newHeatTime : function(lane, time, pass, perfect) {
-    // Set the Lane Leg Timer
-    $laneTimer = this.getLaneTimer(lane);
-    $laneTimer.html(time);
-
     // Add the heat row
     $table = this.getLaneTable(lane);
     var row = '<tr class="heat-row"><td class="time">' + time + '</td>';
@@ -55,6 +51,11 @@ var EJS = {
     }
 
     //lane.html(time);
+  },
+
+  updateDisplay : function(lane, time) {
+    $timerDisplay = this.getLaneTimer(lane);
+    $timerDisplay.html(time);
   },
 
   /**
@@ -98,23 +99,24 @@ var EJS = {
 };
 
 // Initialize Socket
-var socket = io.connect('http://ejs.mac');
+var socket = io.connect('http://' + window.location.hostname);
 
 // New heat time
 socket.on('receiveNewHeatTime', function (data) {
   console.log(data);
   EJS.newHeatTime(data.lane, data.time, data.pass, data.perfect);
+  EJS.updateDisplay(data.lane, data.time);
 });
 
 // New heat total time
 socket.on('receiveHeatTotalTime', function (data) {
   console.log(data);
   EJS.newHeatTotalTime(data.lane, data.time, data.pass, data.perfect);
+  EJS.updateDisplay(data.lane, data.time);
 });
 
 // Race reset
 socket.on('raceReset', function (data) {
-  console.log(data);
   EJS.reset();
 });
 
