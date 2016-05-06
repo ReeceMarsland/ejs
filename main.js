@@ -18,15 +18,13 @@ var serialPort = new com.SerialPort(config.serialPort, {
   //parser: com.parsers.readline('\r\n')
 });
 
-// On connection to serial port
+// On connection to serial port.
 serialPort.on('open',function() {
-  console.log('Port open');
+  console.log('EJS Connected');
 });
 
 // On incomming data from serial port.
 serialPort.on('data', function(data) {
-  //var dataString = data.toString();
-  //data = "--" + data + "--";
   if (config.debug == true) {
     console.log(data);
   }
@@ -78,6 +76,9 @@ var EJSheat = {
   lane1 : {
     totalTime : 0,
     lastUpdate: 0,
+    lastPassCalc : 0,
+    lastPass : 0,
+    lastPassTime : 0,
     dogIn : false,
     totals : {
       total : 0,
@@ -89,6 +90,9 @@ var EJSheat = {
   lane2 : {
     totalTime : 0,
     lastUpdate: 0,
+    lastPassCalc : 0,
+    lastPass : 0,
+    lastPassTime : 0,
     dogIn : false,
     totals : {
       total : 0,
@@ -117,7 +121,7 @@ var EJS = {
   },
 
   processSensorData : function(data) {
-    console.log(this.race);
+    if (config.debug == true) { console.log(this.race) };
     switch (data.sensors) {
       // Left lane front sensors.
       case '10':
@@ -136,22 +140,58 @@ var EJS = {
 
   addSplitForLane : function(lane, time) {
     var lastUpdate = this.race[lane].lastUpdate;
-    if (lastUpdate + 2000 < time || lastUpdate == 0) {
-      this.race[lane].lastUpdate = time;
+    var lastPassCalc = this.race[lane].lastPassCalc;
+    var update = false;
+    var uiLane = lane == 'lane1' ? 'L' : 'R';
+
+    if (time > lastUpdate + 2000 || lastUpdate == 0) {
+      // Set lastUpdate time as the race start if first dog is late.
+      if (lastUpdate == 0 && time > EJS.startSequenceTime) {
+        this.race[lane].lastUpdate = EJS.startSequenceTime;
+      }
+      else {
+        this.race[lane].lastUpdate = time;
+      }
+
+      update = true;
+
       // If the start time then remove EJS start sequence from time.
       if (lastUpdate == 0) {
+        // Store that calculated last pass.
+        this.race[lane].lastPassCalc = time;
         time = time - EJS.startSequenceTime;
+        // Don't update entire dog line for starts but update last pass.
+        update = false;
+        var startTime = this.convertTime(time - lastUpdate);
+        this.race[lane].lastPassTime = startTime;
+        io.sockets.emit('receiveNewStartTime', { lane: uiLane, time: startTime });
+      }
+      else if (lastUpdate < EJS.startSequenceTime) {
+        lastUpdate = EJS.startSequenceTime;
       }
       var splitTime = this.convertTime(time - lastUpdate);
-      console.log(splitTime);
       this.race[lane].splits.push(splitTime);
+    }
+    // Late pass, calculate.
+    else if (time > (lastUpdate + 50) && time > (lastPassCalc + 3000)) {
+      this.race[lane].lastPassCalc = time;
+      this.race[lane].lastPassTime = this.convertTime(time - lastUpdate);
+    }
+
+    if (update) {
       // Update webclient.
-      var uiLane = lane == 'lane1' ? 'L' : 'R';
-      io.sockets.emit('receiveNewHeatTime', { lane: uiLane, time: splitTime, pass: '0.00', perfect: '0.00' });
+      var lastPassTime = this.race[lane].lastPassTime > 0 ? this.race[lane].lastPassTime : 0;
+      var perfectTime = this.roundNumber(splitTime - lastPassTime);
+      io.sockets.emit('receiveNewHeatTime', { lane: uiLane, time: splitTime, pass: this.race[lane].lastPassTime, perfect: perfectTime });
+      this.race[lane].lastPassTime = 0;
     }
   },
 
   stopRace : function(data) {
+    // Ensure minimum time of 0.
+    this.race.lane1.lastUpdate = this.race.lane1.lastUpdate < EJS.startSequenceTime ? EJS.startSequenceTime : this.race.lane1.lastUpdate;
+    this.race.lane2.lastUpdate = this.race.lane2.lastUpdate < EJS.startSequenceTime ? EJS.startSequenceTime : this.race.lane2.lastUpdate;
+    // Get total times.
     this.race.lane1.TotalTime = this.convertTime(this.race.lane1.lastUpdate, true);
     this.race.lane2.TotalTime = this.convertTime(this.race.lane2.lastUpdate, true);
     // Update webclient.
@@ -170,12 +210,19 @@ var EJS = {
       time = time - EJS.startSequenceTime;
     }
     time = time / 1000;
-    console.log(time);
-    return Number(Math.round(time+'e2')+'e-2').toFixed(2);
+    if (config.debug == true) {
+      console.log(time);
+    }
+
+    return this.roundNumber(time);
   },
 
   h2d : function(h) {
     return parseInt(h,16);
+  },
+
+  roundNumber : function(num) {
+    return Number(Math.round(num+'e2')+'e-2').toFixed(2);
   }
 };
 

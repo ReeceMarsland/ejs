@@ -38,7 +38,7 @@ var EJS = {
     }
     else {
       var totalsRow = '<tr class="totals"><td class="time">' + time + '</td>';
-      totalsRow += '<td class="pass">' + pass + '</td><td class="perfect">' + perfect + '</td></tr>';
+      //totalsRow += '<td class="pass">' + pass + '</td><td class="perfect">' + perfect + '</td></tr>';
       $table = this.getLaneTable(lane);
       $table.append(totalsRow);
 
@@ -55,6 +55,16 @@ var EJS = {
 
   updateDisplay : function(lane, time) {
     $timerDisplay = this.getLaneTimer(lane);
+    var timeParts = time.split('.');
+    // Convert to number and pad left with 0 if needed.
+    timeParts[0] = Number(timeParts[0]);
+    console.log(timeParts[0]);
+    if (timeParts[0] > 0 && timeParts[0] < 10 || timeParts[0] == 0) {
+      timeParts[0] = "0" + timeParts[0];
+    }
+
+    time = timeParts[0] + '<span>.</span>' + timeParts[1];
+
     $timerDisplay.html(time);
   },
 
@@ -62,8 +72,8 @@ var EJS = {
    * Reset the display
    */
   reset : function() {
-    this.$lTimeDisplay.html('0.00');
-    this.$rTimeDisplay.html('0.00');
+    this.$lTimeDisplay.html('00<span>.</span>00');
+    this.$rTimeDisplay.html('00<span>.</span>00');
     this.$lTable.find('tbody tr').remove();
     this.$rTable.find('tbody tr').remove();
     this.$lTableTotals = '';
@@ -100,6 +110,12 @@ var EJS = {
 
 // Initialize Socket
 var socket = io.connect('http://' + window.location.hostname);
+
+// New start time
+socket.on('receiveNewStartTime', function (data) {
+  console.log(data);
+  EJS.updateDisplay(data.lane, data.time);
+});
 
 // New heat time
 socket.on('receiveNewHeatTime', function (data) {

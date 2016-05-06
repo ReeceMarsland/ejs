@@ -6,8 +6,15 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'digitaldream';
+  src: local('☺'), url('../font/DIGITALDREAMFATNARROW.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .digital {
-  font-family: ds-digitalnormal;
+  font-family: digitaldream;
   font-size: 1.4em;
 }
 
@@ -32,11 +39,21 @@ table.table td, table.table th {
 }
 
 .full-size {
-  text-align: center;
-  font-size: 300px;
-  line-height: 300px;
+  line-height: 600px;
+  font-size: 400px;
+  width: 100%;
+  height: 100%;
+}
+
+.full-size span {
+  margin-left: -125px;
+  letter-spacing: -125px;
 }
 
 .timer-display-page {
   background-color: #000;
+}
+
+.race-data-table {
+  margin-top: 30px;
 }
